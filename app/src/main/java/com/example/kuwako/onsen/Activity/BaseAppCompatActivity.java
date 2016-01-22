@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class BaseAppCompatActivity extends AppCompatActivity{
 
+    public String LOG_TAG = "onsenlog";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
