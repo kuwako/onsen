@@ -1,5 +1,6 @@
 package com.example.kuwako.onsen.Activity;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,12 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import com.example.kuwako.onsen.R;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 // 検索画面
 public class MainActivity extends BaseAppCompatActivity {
@@ -22,6 +29,8 @@ public class MainActivity extends BaseAppCompatActivity {
     private Button mapSearchBtn;
     private Spinner prefSpinner;
     private String prefNameList[] = {"東京", "大阪", "愛知"};
+
+    private String prefUri = "http://loco-partners.heteml.jp/u/prefectures";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,7 @@ public class MainActivity extends BaseAppCompatActivity {
         });
 
         // TODO 都道府県取得
+        getPrefData();
 
         // スピナーに登録
         ArrayAdapter<String> adapter = new ArrayAdapter<String>
@@ -95,5 +105,10 @@ public class MainActivity extends BaseAppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getPrefData() {
+
+
     }
 }
