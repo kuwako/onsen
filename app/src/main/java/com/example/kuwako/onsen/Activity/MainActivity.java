@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.android.volley.toolbox.Volley;
 import com.example.kuwako.onsen.R;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -22,6 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONObject;
+
 // 検索画面
 public class MainActivity extends BaseAppCompatActivity {
 
@@ -29,6 +32,8 @@ public class MainActivity extends BaseAppCompatActivity {
     private Button mapSearchBtn;
     private Spinner prefSpinner;
     private String prefNameList[] = {"東京", "大阪", "愛知"};
+    private ArrayAdapter<String> adapter;
+    private RequestQueue mRequestQueue;
 
     private String prefUri = "http://loco-partners.heteml.jp/u/prefectures";
 
@@ -57,14 +62,15 @@ public class MainActivity extends BaseAppCompatActivity {
             }
         });
 
-        // TODO 都道府県取得
-        getPrefData();
-
         // スピナーに登録
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+        adapter = new ArrayAdapter<String>
                 (this, R.layout.support_simple_spinner_dropdown_item, prefNameList);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         prefSpinner = (Spinner) findViewById(R.id.prefSpinner);
+
+        // TODO 都道府県取得
+        getPrefData();
+
         prefSpinner.setAdapter(adapter);
 
         // スピナのリスナ登録
@@ -107,8 +113,24 @@ public class MainActivity extends BaseAppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // 都道府県取得
     private void getPrefData() {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
 
-
+        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, prefUri, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                // 通信成功時の処理
+                Log.d(LOG_TAG, "通信成功");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // 通信失敗時
+                Log.d(LOG_TAG, error.toString());
+            }
+        }));
     }
 }
