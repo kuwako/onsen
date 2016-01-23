@@ -23,6 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 // 検索画面
@@ -31,7 +33,7 @@ public class MainActivity extends BaseAppCompatActivity {
     private Button prefSearchBtn;
     private Button mapSearchBtn;
     private Spinner prefSpinner;
-    private String prefNameList[] = {"東京", "大阪", "愛知"};
+    private String prefNameList[];
     private ArrayAdapter<String> adapter;
     private RequestQueue mRequestQueue;
 
@@ -64,12 +66,13 @@ public class MainActivity extends BaseAppCompatActivity {
 
         // スピナーに登録
         adapter = new ArrayAdapter<String>
-                (this, R.layout.support_simple_spinner_dropdown_item, prefNameList);
+                (this, R.layout.support_simple_spinner_dropdown_item);
+
+        // 都道府県をjsonで取得してadapterにset
+        getPrefData();
+
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         prefSpinner = (Spinner) findViewById(R.id.prefSpinner);
-
-        // TODO 都道府県取得
-        getPrefData();
 
         prefSpinner.setAdapter(adapter);
 
@@ -79,16 +82,14 @@ public class MainActivity extends BaseAppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Spinner spinner = (Spinner) parent;
                 String item = (String) spinner.getSelectedItem();
+                int prefId = (int) spinner.getSelectedItemPosition() + 1;
 
-                Log.d(LOG_TAG, item);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
-
     }
 
     @Override
@@ -121,9 +122,21 @@ public class MainActivity extends BaseAppCompatActivity {
 
         mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, prefUri, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(JSONObject prefJson) {
                 // 通信成功時の処理
                 Log.d(LOG_TAG, "通信成功");
+                // JSONのパース
+                try {
+                    for (int i = 1; i <= prefJson.length(); i++) {
+                        String prefName = prefJson.getString(String.valueOf(i));
+                        adapter.add(prefName);
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
