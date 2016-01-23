@@ -56,7 +56,7 @@ public class MainActivity extends BaseAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "都道府県検索");
-                mapIntent.putExtra("pref_id", prefId);
+                mapIntent.putExtra(getString(R.string.pref_id), prefId);
                 startActivity(mapIntent);
             }
         });
@@ -88,8 +88,9 @@ public class MainActivity extends BaseAppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Spinner spinner = (Spinner) parent;
                 String item = (String) spinner.getSelectedItem();
-                prefId = (int) spinner.getSelectedItemPosition() + 1;
 
+                // 取得できる値が0からスタートなので +1
+                prefId = (int) spinner.getSelectedItemPosition() + 1;
             }
 
             @Override
@@ -133,12 +134,11 @@ public class MainActivity extends BaseAppCompatActivity {
                 Log.d(LOG_TAG, "通信成功");
                 // JSONのパース
                 try {
+                    // 都道府県情報をadapterに追加
                     for (int i = 1; i <= prefJson.length(); i++) {
                         String prefName = prefJson.getString(String.valueOf(i));
                         adapter.add(prefName);
                     }
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

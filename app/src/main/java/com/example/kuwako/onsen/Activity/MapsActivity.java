@@ -1,5 +1,6 @@
 package com.example.kuwako.onsen.Activity;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -39,7 +40,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Intent intent;
 
+        intent = getIntent();
+        int prefId = intent.getIntExtra(getString(R.string.pref_id), 0);
+        
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
