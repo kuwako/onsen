@@ -1,5 +1,6 @@
 package com.example.kuwako.onsen.Activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -36,6 +37,8 @@ public class MainActivity extends BaseAppCompatActivity {
     private String prefNameList[];
     private ArrayAdapter<String> adapter;
     private RequestQueue mRequestQueue;
+    private Intent mapIntent;
+    private int prefId = 1;
 
     private String prefUri = "http://loco-partners.heteml.jp/u/prefectures";
 
@@ -45,6 +48,7 @@ public class MainActivity extends BaseAppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mapIntent = new Intent(MainActivity.this, MapsActivity.class);
 
         // 都道府県検索ボタン
         prefSearchBtn = (Button) findViewById(R.id.prefSearchBtn);
@@ -52,6 +56,8 @@ public class MainActivity extends BaseAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "都道府県検索");
+                mapIntent.putExtra("pref_id", prefId);
+                startActivity(mapIntent);
             }
         });
 
@@ -82,7 +88,7 @@ public class MainActivity extends BaseAppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Spinner spinner = (Spinner) parent;
                 String item = (String) spinner.getSelectedItem();
-                int prefId = (int) spinner.getSelectedItemPosition() + 1;
+                prefId = (int) spinner.getSelectedItemPosition() + 1;
 
             }
 
