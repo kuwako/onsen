@@ -16,6 +16,7 @@ import com.example.kuwako.onsen.R;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private LatLng position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +45,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         intent = getIntent();
         int prefId = intent.getIntExtra(getString(R.string.pref_id), 0);
-        
+
+        if (prefId != 0) {
+            position = prefSearch(prefId);
+        }
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.addMarker(new MarkerOptions().position(position).title("Let's 温泉"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+    }
+
+    // 都道府県検索
+    private LatLng prefSearch(int prefId) {
+        // prefIdから周辺の温泉情報取得
+
+        // JSONパース
+
+        // forで回してマーカー追加
+        // マーカーには温泉名とDetailへのリンク
     }
 }
