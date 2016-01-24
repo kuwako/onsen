@@ -3,13 +3,14 @@ package com.example.kuwako.onsen.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import com.example.kuwako.onsen.R;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -34,7 +36,7 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     private JSONArray onsenListJson;
 
     // Mapの表示範囲レベル
-    private final float ZOOM_LEVEL = 7.0f;
+    private final float ZOOM_LEVEL = 9.0f;
 
     // ピンが出すぎるのもわかりづらいので、とりあえずlimit指定。
     private String onsenLimit = "30";
@@ -124,13 +126,50 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
 
         for (int i = 0; i < onsenListJson.length(); i++) {
             try {
-                JSONObject onsenJson = onsenListJson.getJSONObject(i).getJSONObject("Onsen");
+                final JSONObject onsenJson = onsenListJson.getJSONObject(i).getJSONObject("Onsen");
+
+                // 温泉の緯度経度
                 LatLng onsenLatLng = new LatLng(
                         Double.parseDouble(onsenJson.getString("latitude")),
                         Double.parseDouble(onsenJson.getString("longitude")));
 
+                // ピンの詳細設定
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.title(onsenJson.getString("name"));
+                markerOptions.position(onsenLatLng);
+                markerOptions.snippet(onsenJson.getString("address"));
+
                 // ピンを立てる
-                mMap.addMarker(new MarkerOptions().position(onsenLatLng).title("Let's 温泉"));
+                mMap.addMarker(markerOptions);
+                mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                    @Override
+                    public View getInfoWindow(Marker marker) {
+                        View view = getLayoutInflater().inflate(R.layout.custome_info_window, null);
+                        // タイトル
+                        TextView title = (TextView) view.findViewById(R.id.marker_title);
+                        title.setText(marker.getTitle());
+                        // 詳細
+                        TextView snippet = (TextView) view.findViewById(R.id.marker_description);
+                        snippet.setText(marker.getSnippet());
+                        // ボタン
+                        Button btn = (Button) view.findViewById(R.id.marker_btn);
+                        btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Log.d(LOG_TAG, "marker click");
+                                Intent intent = new Intent(MapsActivity.this, DetailActivity.class);
+                                intent.putExtra("onsen", String.valueOf(onsenJson));
+                                startActivity(intent);
+                            }
+                        });
+                        return view;
+                    }
+
+                    @Override
+                    public View getInfoContents(Marker marker) {
+                        return null;
+                    }
+                });
             } catch (JSONException e) {
                 e.printStackTrace();
             }

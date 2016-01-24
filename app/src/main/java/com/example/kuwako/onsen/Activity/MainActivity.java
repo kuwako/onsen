@@ -82,7 +82,6 @@ public class MainActivity extends BaseAppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Spinner spinner = (Spinner) parent;
-                String item = (String) spinner.getSelectedItem();
 
                 // 取得できる値が0からスタートなので +1
                 prefId = (int) spinner.getSelectedItemPosition() + 1;
