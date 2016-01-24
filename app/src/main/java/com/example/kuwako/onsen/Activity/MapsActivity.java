@@ -181,12 +181,14 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                     }
                 });
 
+                // infoWindow内にボタンを設置するのが難易度高そうなのでとりあえずこっちで実装
                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     // infoWindowクリック時に温泉詳細に飛ぶ。
                     @Override
                     public void onInfoWindowClick(Marker marker) {
                         Log.d(LOG_TAG, "marker click");
                         Intent intent = new Intent(MapsActivity.this, DetailActivity.class);
+                        // TODO もっと丁寧に渡す方法ありそう
                         intent.putExtra("onsen", String.valueOf(onsenJson));
                         startActivity(intent);
                     }
