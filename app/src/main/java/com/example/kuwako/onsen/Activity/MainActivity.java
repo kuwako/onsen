@@ -1,6 +1,12 @@
 package com.example.kuwako.onsen.Activity;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -34,6 +40,7 @@ public class MainActivity extends BaseAppCompatActivity {
     private RequestQueue mRequestQueue;
     private Intent mapIntent;
     private int prefId = 1;
+    private LocationManager mLocationManager;
 
     private String prefUri = "http://loco-partners.heteml.jp/u/prefectures";
 
@@ -44,6 +51,9 @@ public class MainActivity extends BaseAppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mapIntent = new Intent(MainActivity.this, MapsActivity.class);
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gpsFlg = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        Log.d(LOG_TAG, gpsFlg ? "GPS OK" : "GPS NG");
 
         // 都道府県検索ボタン
         prefSearchBtn = (Button) findViewById(R.id.prefSearchBtn);
@@ -62,6 +72,58 @@ public class MainActivity extends BaseAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "マップ検索");
+
+                // 現在地を取得
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for Activity#requestPermissions for more details.
+                    return;
+                }
+
+                mLocationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        3000,
+                        10,
+                        new LocationListener() {
+                            @Override
+                            public void onLocationChanged(Location location) {
+                                mapIntent.putExtra("mapSearch", true);
+                                mapIntent.putExtra("latitude", location.getLatitude());
+                                mapIntent.putExtra("longitude", location.getLongitude());
+
+                                Log.d(LOG_TAG, "GPS Lat: " + location.getLatitude() + " Lon: " + location.getLongitude());
+                                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    return;
+                                }
+
+                                mLocationManager.removeUpdates(this);
+
+                                startActivity(mapIntent);
+                            }
+
+                            @Override
+                            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                            }
+
+                            @Override
+                            public void onProviderEnabled(String provider) {
+
+                            }
+
+                            @Override
+                            public void onProviderDisabled(String provider) {
+
+                            }
+                        }
+                );
+
+                // MapsActivityに飛ばす
             }
         });
 
@@ -69,7 +131,7 @@ public class MainActivity extends BaseAppCompatActivity {
         adapter = new ArrayAdapter<String>
                 (this, R.layout.support_simple_spinner_dropdown_item);
 
-        // 都道府県をjsonで取得してadapterにset
+        // 外部APIから都道府県をjsonで取得してadapterにset
         getPrefData();
 
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
