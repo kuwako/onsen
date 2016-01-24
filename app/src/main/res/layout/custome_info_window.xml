@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#aaaaaa"
+    android:background="#dddddd"
     android:orientation="vertical">
 
     <TextView
@@ -20,5 +20,7 @@
         android:id="@+id/marker_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/marker_btn" />
+        android:text="@string/marker_btn"
+        android:layout_margin="16dp"
+        android:background="#ffe080"/>
 </LinearLayout>

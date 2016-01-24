@@ -151,9 +151,16 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                         // 詳細
                         TextView snippet = (TextView) view.findViewById(R.id.marker_description);
                         snippet.setText(marker.getSnippet());
-                        // ボタン
+
+                        /* TODO
+                         *  infoWindowにボタンやチェックボックスをつけるのはGoogle的に想定されていないっぽいので後回し。
+                         *  詳細ボタンではなくinfoWindow自体にクリック判定をつける。
+                         */
+                        // 詳細ボタン
+                        /*
                         Button btn = (Button) view.findViewById(R.id.marker_btn);
                         btn.setOnClickListener(new View.OnClickListener() {
+                            // 詳細ボタンクリック時の処理
                             @Override
                             public void onClick(View v) {
                                 Log.d(LOG_TAG, "marker click");
@@ -162,12 +169,26 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                                 startActivity(intent);
                             }
                         });
+                        */
+
                         return view;
                     }
+
 
                     @Override
                     public View getInfoContents(Marker marker) {
                         return null;
+                    }
+                });
+
+                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    // infoWindowクリック時に温泉詳細に飛ぶ。
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+                        Log.d(LOG_TAG, "marker click");
+                        Intent intent = new Intent(MapsActivity.this, DetailActivity.class);
+                        intent.putExtra("onsen", String.valueOf(onsenJson));
+                        startActivity(intent);
                     }
                 });
             } catch (JSONException e) {
