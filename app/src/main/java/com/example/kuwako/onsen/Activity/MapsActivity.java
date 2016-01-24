@@ -11,10 +11,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import com.example.kuwako.onsen.R;
@@ -30,6 +32,9 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     private LatLng position;
     private RequestQueue mRequestQueue;
     private JSONArray onsenListJson;
+
+    // Mapの表示範囲レベル
+    private final float ZOOM_LEVEL = 7.0f;
 
     // ピンが出すぎるのもわかりづらいので、とりあえずlimit指定。
     private String onsenLimit = "30";
@@ -66,10 +71,6 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
             // 外部APIを叩いてpositionと温泉のJSONObjectセット
             prefSearch(prefId);
         }
-
-        // Add a marker in Sydney and move the camera
-//        mMap.addMarker(new MarkerOptions().position(position).title("Let's 温泉"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
     }
 
     // 都道府県検索
@@ -99,12 +100,11 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
 
                     // JSONをセット
                     onsenListJson = prefOnsenListJson;
-                    mMap.addMarker(new MarkerOptions().position(position).title("Let's 温泉"));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+
+                    setPinsOnMap();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -113,7 +113,29 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                 Log.d(LOG_TAG, error.toString());
             }
         }));
+    }
 
+    // GoogleMap上に温泉のpinを表示
+    private void setPinsOnMap() {
+        // ズームレベルを指定して表示場所移動
+        CameraPosition pos = new CameraPosition(position, ZOOM_LEVEL, 0.0f, 0.0f);
+        CameraUpdate camera = CameraUpdateFactory.newCameraPosition(pos);
+        mMap.moveCamera(camera);
+
+        for (int i = 0; i < onsenListJson.length(); i++) {
+            try {
+                JSONObject onsenJson = onsenListJson.getJSONObject(i).getJSONObject("Onsen");
+                LatLng onsenLatLng = new LatLng(
+                        Double.parseDouble(onsenJson.getString("latitude")),
+                        Double.parseDouble(onsenJson.getString("longitude")));
+
+                // ピンを立てる
+                mMap.addMarker(new MarkerOptions().position(onsenLatLng).title("Let's 温泉"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
 
     }
 
