@@ -4,9 +4,11 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,8 +31,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.location.LocationManager.*;
+
 // 検索画面
-public class MainActivity extends BaseAppCompatActivity {
+public class MainActivity extends BaseAppCompatActivity implements LocationListener {
 
     private Button prefSearchBtn;
     private Button mapSearchBtn;
@@ -40,7 +44,8 @@ public class MainActivity extends BaseAppCompatActivity {
     private RequestQueue mRequestQueue;
     private Intent mapIntent;
     private int prefId = 1;
-    private LocationManager mLocationManager;
+    private LocationManager mLocationManager = null;
+    private String mProvider = "";
 
     private String prefUri = "http://loco-partners.heteml.jp/u/prefectures";
 
@@ -52,7 +57,7 @@ public class MainActivity extends BaseAppCompatActivity {
         setSupportActionBar(toolbar);
         mapIntent = new Intent(MainActivity.this, MapsActivity.class);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        boolean gpsFlg = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean gpsFlg = mLocationManager.isProviderEnabled(GPS_PROVIDER);
         Log.d(LOG_TAG, gpsFlg ? "GPS OK" : "GPS NG");
 
         // 都道府県検索ボタン
@@ -72,58 +77,6 @@ public class MainActivity extends BaseAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "マップ検索");
-
-                // 現在地を取得
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for Activity#requestPermissions for more details.
-                    return;
-                }
-
-                mLocationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        3000,
-                        10,
-                        new LocationListener() {
-                            @Override
-                            public void onLocationChanged(Location location) {
-                                mapIntent.putExtra("mapSearch", true);
-                                mapIntent.putExtra("latitude", location.getLatitude());
-                                mapIntent.putExtra("longitude", location.getLongitude());
-
-                                Log.d(LOG_TAG, "GPS Lat: " + location.getLatitude() + " Lon: " + location.getLongitude());
-                                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                    return;
-                                }
-
-                                mLocationManager.removeUpdates(this);
-
-                                startActivity(mapIntent);
-                            }
-
-                            @Override
-                            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                            }
-
-                            @Override
-                            public void onProviderEnabled(String provider) {
-
-                            }
-
-                            @Override
-                            public void onProviderDisabled(String provider) {
-
-                            }
-                        }
-                );
-
-                // MapsActivityに飛ばす
             }
         });
 
@@ -153,6 +106,17 @@ public class MainActivity extends BaseAppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        // 現在地取得
+        Criteria criteria = new Criteria();
+        // 精度
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mProvider = mLocationManager.getBestProvider(criteria, true);
+
+        Log.d(LOG_TAG, "provider = " + mProvider);
     }
 
     @Override
@@ -175,6 +139,32 @@ public class MainActivity extends BaseAppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mLocationManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                }
+            }
+            mLocationManager.requestLocationUpdates(mProvider, 0, 0, this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+            }
+        }
+        mLocationManager.removeUpdates(this);
     }
 
     // 都道府県取得
@@ -207,5 +197,26 @@ public class MainActivity extends BaseAppCompatActivity {
                 Log.d(LOG_TAG, error.toString());
             }
         }));
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(LOG_TAG, "location is changed.");
+        Log.d(LOG_TAG, "lat: " + location.getLatitude() + " log: " + location.getLongitude());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
