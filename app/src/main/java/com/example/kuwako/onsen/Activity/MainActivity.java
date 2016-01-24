@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.Volley;
 import com.example.kuwako.onsen.R;
@@ -46,6 +47,7 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
     private int prefId = 1;
     private LocationManager mLocationManager = null;
     private String mProvider = "";
+    private Location mLocation = null;
 
     private String prefUri = "http://loco-partners.heteml.jp/u/prefectures";
 
@@ -77,6 +79,24 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "マップ検索");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                }
+
+                mLocation = mLocationManager.getLastKnownLocation(mProvider);
+
+                if (mLocation != null) {
+                    mapIntent.putExtra("mapSearch", true);
+                    mapIntent.putExtra("latitude", mLocation.getLatitude());
+                    mapIntent.putExtra("longitude", mLocation.getLongitude());
+
+                    startActivity(mapIntent);
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "現在地取得中です。しばらく経ってからもう一度クリックしてください", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
         });
 
@@ -203,6 +223,13 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
     public void onLocationChanged(Location location) {
         Log.d(LOG_TAG, "location is changed.");
         Log.d(LOG_TAG, "lat: " + location.getLatitude() + " log: " + location.getLongitude());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+            }
+        }
+        mLocationManager.removeUpdates(this);
     }
 
     @Override
