@@ -17,48 +17,56 @@
         <TextView
             android:text="温泉名"/>
         <TextView
+            android:layout_marginLeft="16dp"
             android:id="@+id/name"/>
     </TableRow>
     <TableRow>
         <TextView
             android:text="かな"/>
         <TextView
+            android:layout_marginLeft="16dp"
             android:id="@+id/kana"/>
     </TableRow>
     <TableRow>
         <TextView
             android:text="住所"/>
         <TextView
+            android:layout_marginLeft="16dp"
             android:id="@+id/address"/>
     </TableRow>
     <TableRow>
         <TextView
             android:text="電話番号"/>
         <TextView
+            android:layout_marginLeft="16dp"
             android:id="@+id/tel"/>
     </TableRow>
     <TableRow>
         <TextView
             android:text="値段"/>
         <TextView
+            android:layout_marginLeft="16dp"
             android:id="@+id/price"/>
     </TableRow>
     <TableRow>
         <TextView
             android:text="休み"/>
         <TextView
+            android:layout_marginLeft="16dp"
             android:id="@+id/close_day"/>
     </TableRow>
     <TableRow>
         <TextView
             android:text="営業時間"/>
         <TextView
+            android:layout_marginLeft="16dp"
             android:id="@+id/open_hour"/>
     </TableRow>
     <TableRow>
         <TextView
             android:text="温泉の特徴"/>
         <TextView
+            android:layout_marginLeft="16dp"
             android:id="@+id/spring_quality"/>
     </TableRow>
 </TableLayout>
