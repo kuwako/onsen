@@ -2,6 +2,7 @@ package com.example.kuwako.onsen.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,7 +36,7 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     private RequestQueue mRequestQueue;
     private JSONArray onsenListJson;
 
-    // Mapの表示範囲レベル
+    // Mapの表示範囲レベル都道府県一個表示できるかできないかぐらいのサイズ
     private final float ZOOM_LEVEL = 9.0f;
 
     // ピンが出すぎるのもわかりづらいので、とりあえずlimit指定。
@@ -45,6 +46,10 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);

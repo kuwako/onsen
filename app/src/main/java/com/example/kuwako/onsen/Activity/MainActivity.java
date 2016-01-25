@@ -57,6 +57,10 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        // TODO TOPのActivityに戻るボタン必要か相談。要らない気がするので、一旦コメントアウト
+        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // getSupportActionBar().setHomeButtonEnabled(true);
+
         mapIntent = new Intent(MainActivity.this, MapsActivity.class);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean gpsFlg = mLocationManager.isProviderEnabled(GPS_PROVIDER);

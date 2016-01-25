@@ -14,15 +14,18 @@ import com.example.kuwako.onsen.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends BaseAppCompatActivity {
     private JSONObject onsenJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         Intent intent = getIntent();
         // 温泉情報を取得
