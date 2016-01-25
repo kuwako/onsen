@@ -75,6 +75,7 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
 
         // 現在地検索ボタン
         mapSearchBtn = (Button) findViewById(R.id.mapSearchBtn);
+        // TODO GPSオフの時の処理
         mapSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

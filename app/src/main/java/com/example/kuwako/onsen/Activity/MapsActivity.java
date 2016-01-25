@@ -68,17 +68,66 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
 
         intent = getIntent();
         int prefId = intent.getIntExtra(getString(R.string.pref_id), 0);
+        boolean isMapSearch = intent.getBooleanExtra("mapSearch", false);
 
         if (prefId != 0) {
             // 外部APIを叩いてpositionと温泉のJSONObjectセット
             prefSearch(prefId);
+        } else if (isMapSearch) {
+            // 現在地検索だった場合
+            // デフォ値はとりあえず日本標準時にしておく
+            mapSearch(intent.getDoubleExtra("latitude", 35.0), intent.getDoubleExtra("longitude", 135.0));
         }
+    }
+
+    // 現在地検索
+    private void mapSearch(Double lat, Double lon) {
+        // mapの中心点設定
+        position = new LatLng(lat, lon);
+
+        // 与えられた外部APIでは、緯度経度による最小外接円内検索が取得できるため、二つの緯度経度が必要。
+        // lat、lonを引数±0.5して現在地を中心とする直径が経度1度分の円内の温泉を検索
+        // NOTE: 経度1度分の円でだいたい群馬がすっぽり入るぐらいっぽいのでちょうどいいはず
+        Double latlonDiff = 0.5;
+        String lonEast = String.valueOf(lon + latlonDiff);
+        String lonWest = String.valueOf(lon - latlonDiff);
+        String latEast = String.valueOf(lat + latlonDiff);
+        String latWest = String.valueOf(lat - latlonDiff);
+
+        // 現在地取得用外部APIをURL生成
+        String mapUri = BASE_URL + "/geometric_search?point[]=" +
+                lonEast + "," + latEast + "&point[]=" + lonWest + "," + latWest + "&limit=" + onsenLimit;
+
+        // 外部APにアクセスして温泉情報取得
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(this);
+        } else {
+            mRequestQueue.start();
+        }
+        mRequestQueue.add(new JsonArrayRequest(mapUri, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray mapOnsenListJson) {
+                // 通信成功時の処理
+                Log.d(LOG_TAG, "通信成功");
+
+                // JSONをセット
+                onsenListJson = mapOnsenListJson;
+                // ピンを立てる
+                setPinsOnMap();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // 通信失敗時
+                Log.d(LOG_TAG, error.toString());
+            }
+        }));
     }
 
     // 都道府県検索
     private void prefSearch(int prefId) {
         // 都道府県検索用のURL
-        String prefUri = "http://loco-partners.heteml.jp/u/onsens?prefecture=" + String.valueOf(prefId) + "&limit=" + onsenLimit;
+        String prefUri = BASE_URL + "?prefecture=" + String.valueOf(prefId) + "&limit=" + onsenLimit;
 
         // 外部APにアクセスして温泉情報取得
         if (mRequestQueue == null) {
@@ -153,7 +202,7 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                         snippet.setText(marker.getSnippet());
 
                         /* TODO
-                         *  infoWindowにボタンやチェックボックスをつけるのはGoogle的に想定されていないっぽいので後回し。
+                         *  infoWindowにボタンやチェックボックスをつけるのはGoogle的に想定されていなくて難易度高いので後回し。
                          *  詳細ボタンではなくinfoWindow自体にクリック判定をつける。
                          */
                         // 詳細ボタン
@@ -181,7 +230,7 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                     }
                 });
 
-                // infoWindow内にボタンを設置するのが難易度高そうなのでとりあえずこっちで実装
+                // infoWindow内にボタンを設置するのが上述の理由で難易度高そうなのでとりあえずこっちで実装
                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     // infoWindowクリック時に温泉詳細に飛ぶ。
                     @Override
@@ -205,13 +254,17 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     protected void onStart() {
         super.onStart();
 
-//        mRequestQueue.start();
+        if (mRequestQueue != null) {
+            mRequestQueue.start();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-//        mRequestQueue.stop();
+        if (mRequestQueue != null) {
+            mRequestQueue.stop();
+        }
     }
 }
