@@ -2,11 +2,7 @@ package com.example.kuwako.onsen.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.TextView;
 
 import com.example.kuwako.onsen.R;
@@ -15,7 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DetailActivity extends BaseAppCompatActivity {
-    private JSONObject onsenJson;
+    private JSONObject mOnsenJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,20 +22,27 @@ public class DetailActivity extends BaseAppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         Intent intent = getIntent();
         // 温泉情報を取得
         String onsenJsonStr = intent.getStringExtra("onsen");
         // 温泉情報をJsonに変換
         try {
-            onsenJson = new JSONObject(onsenJsonStr);
+            mOnsenJson = new JSONObject(onsenJsonStr);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        // 温泉情報をView側にセット
         setOnsenInfo();
     }
 
+    // 温泉情報をView側にセット
     private void setOnsenInfo() {
         TextView name = (TextView) findViewById(R.id.name);
         TextView kana = (TextView) findViewById(R.id.kana);
@@ -51,14 +54,14 @@ public class DetailActivity extends BaseAppCompatActivity {
         TextView spring_quality = (TextView) findViewById(R.id.spring_quality);
 
         try {
-            name.setText(onsenJson.getString("name"));
-            kana.setText(onsenJson.getString("kana"));
-            address.setText(onsenJson.getString("address"));
-            tel.setText(onsenJson.getString("tel"));
-            price.setText(onsenJson.getString("price"));
-            close_day.setText(onsenJson.getString("close_day"));
-            open_hour.setText(onsenJson.getString("open_hour"));
-            spring_quality.setText(onsenJson.getString("spring_quality"));
+            name.setText(mOnsenJson.getString("name"));
+            kana.setText(mOnsenJson.getString("kana"));
+            address.setText(mOnsenJson.getString("address"));
+            tel.setText(mOnsenJson.getString("tel"));
+            price.setText(mOnsenJson.getString("price"));
+            close_day.setText(mOnsenJson.getString("close_day"));
+            open_hour.setText(mOnsenJson.getString("open_hour"));
+            spring_quality.setText(mOnsenJson.getString("spring_quality"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

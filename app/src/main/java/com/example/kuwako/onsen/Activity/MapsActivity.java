@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -32,9 +31,9 @@ import org.json.JSONObject;
 public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LatLng position;
+    private LatLng mPosition;
     private RequestQueue mRequestQueue;
-    private JSONArray onsenListJson;
+    private JSONArray mOnsenListJson;
 
     // Mapの表示範囲レベル都道府県一個表示できるかできないかぐらいのサイズ
     private final float ZOOM_LEVEL = 9.0f;
@@ -46,7 +45,6 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
@@ -88,7 +86,7 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     // 現在地検索
     private void mapSearch(Double lat, Double lon) {
         // mapの中心点設定
-        position = new LatLng(lat, lon);
+        mPosition = new LatLng(lat, lon);
 
         // 与えられた外部APIでは、緯度経度による最小外接円内検索が取得できるため、二つの緯度経度が必要。
         // lat、lonを引数±0.5して現在地を中心とする直径が経度1度分の円内の温泉を検索
@@ -116,7 +114,7 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                 Log.d(LOG_TAG, "通信成功");
 
                 // JSONをセット
-                onsenListJson = mapOnsenListJson;
+                mOnsenListJson = mapOnsenListJson;
                 // ピンを立てる
                 setPinsOnMap();
             }
@@ -149,13 +147,13 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                 // JSONのパース
                 try {
                     // 都道府県用は中心点が決まっていないので、とりあえず検索で引っかかった1件目を中心に設定。
-                    position = new LatLng(
+                    mPosition = new LatLng(
                             Double.parseDouble(prefOnsenListJson.getJSONObject(0).getJSONObject("Onsen").getString("latitude")),
                             Double.parseDouble(prefOnsenListJson.getJSONObject(0).getJSONObject("Onsen").getString("longitude"))
                     );
 
                     // JSONをセット
-                    onsenListJson = prefOnsenListJson;
+                    mOnsenListJson = prefOnsenListJson;
 
                     setPinsOnMap();
                 } catch (JSONException e) {
@@ -174,13 +172,13 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     // GoogleMap上に温泉のpinを表示
     private void setPinsOnMap() {
         // ズームレベルを指定して表示場所移動
-        CameraPosition pos = new CameraPosition(position, ZOOM_LEVEL, 0.0f, 0.0f);
+        CameraPosition pos = new CameraPosition(mPosition, ZOOM_LEVEL, 0.0f, 0.0f);
         CameraUpdate camera = CameraUpdateFactory.newCameraPosition(pos);
         mMap.moveCamera(camera);
 
-        for (int i = 0; i < onsenListJson.length(); i++) {
+        for (int i = 0; i < mOnsenListJson.length(); i++) {
             try {
-                final JSONObject onsenJson = onsenListJson.getJSONObject(i).getJSONObject("Onsen");
+                final JSONObject onsenJson = mOnsenListJson.getJSONObject(i).getJSONObject("Onsen");
 
                 // 温泉の緯度経度
                 LatLng onsenLatLng = new LatLng(
