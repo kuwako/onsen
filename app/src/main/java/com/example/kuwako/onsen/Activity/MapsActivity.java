@@ -34,14 +34,14 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     private LatLng mPosition;
     private RequestQueue mRequestQueue;
     private JSONArray mOnsenListJson;
+
+    // 日本標準時の緯度経度
     private final Double DEFAULT_LAT = 35.0;
     private final Double DEFAULT_LON = 135.0;
-
     // Mapの表示範囲レベル都道府県一個表示できるかできないかぐらいのサイズ
     private final float ZOOM_LEVEL = 9.0f;
-
     // ピンが出すぎるのもわかりづらいので、とりあえずlimit指定。
-    private String onsenLimit = "30";
+    private final String ONSEN_LIMIT = "30";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,6 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
     }
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -69,9 +68,15 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        Intent intent;
+        // 初期で表示されるポイント指定。
+        // 無指定だと下の外部APIの処理が終わるまでヨーロッパが表示されてしまうため
+        mPosition = new LatLng(DEFAULT_LAT, DEFAULT_LON);
+        CameraPosition pos = new CameraPosition(mPosition, 4.0f, 0.0f, 0.0f);
+        CameraUpdate camera = CameraUpdateFactory.newCameraPosition(pos);
+        mMap.moveCamera(camera);
 
-        intent = getIntent();
+        Intent intent = getIntent();
+
         int prefId = intent.getIntExtra(getString(R.string.pref_id), 0);
         boolean isMapSearch = intent.getBooleanExtra("mapSearch", false);
 
@@ -102,7 +107,7 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
 
         // 現在地取得用外部APIをURL生成
         String mapUri = BASE_URL + "/geometric_search?point[]=" +
-                lonEast + "," + latEast + "&point[]=" + lonWest + "," + latWest + "&limit=" + onsenLimit;
+                lonEast + "," + latEast + "&point[]=" + lonWest + "," + latWest + "&limit=" + ONSEN_LIMIT;
 
         // 外部APにアクセスして温泉情報取得
         if (mRequestQueue == null) {
@@ -133,7 +138,7 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     // 都道府県検索
     private void prefSearch(int prefId) {
         // 都道府県検索用のURL
-        String prefUri = BASE_URL + "?prefecture=" + String.valueOf(prefId) + "&limit=" + onsenLimit;
+        String prefUri = BASE_URL + "?prefecture=" + String.valueOf(prefId) + "&limit=" + ONSEN_LIMIT;
 
         // 外部APにアクセスして温泉情報取得
         if (mRequestQueue == null) {
@@ -207,8 +212,9 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                         TextView snippet = (TextView) view.findViewById(R.id.marker_description);
                         snippet.setText(marker.getSnippet());
 
-                        /* TODO
-                         *  infoWindowにボタンやチェックボックスをつけるのはGoogle的に想定されていなくて難易度高いので後回し。
+                        /* NOTE
+                         *  infoWindowにボタンやチェックボックスをつけるのはGoogle的に想定されていなくて
+                         *  難易度高いので後回し。
                          *  詳細ボタンではなくinfoWindow自体にクリック判定をつける。
                          */
                         // 詳細ボタン

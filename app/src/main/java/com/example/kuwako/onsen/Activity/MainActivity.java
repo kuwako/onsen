@@ -77,7 +77,6 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
 
         // 現在地検索ボタン
         Button mapSearchBtn = (Button) findViewById(R.id.mapSearchBtn);
-        // TODO GPSオフの時の処理
         mapSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,6 +99,7 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
                     mLocation = mLocationManager.getLastKnownLocation(mProvider);
 
                     if (mLocation != null) {
+                        // 現在地が取得できていればMapに飛ばす
                         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                         intent.putExtra("mapSearch", true);
                         intent.putExtra("latitude", mLocation.getLatitude());
@@ -107,6 +107,7 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
 
                         startActivity(intent);
                     } else {
+                        // 現在地が取得できていなければ少し待ってもらう
                         Toast toast = Toast.makeText(getApplicationContext(), "現在地取得中です。しばらく経ってからもう一度クリックしてください", Toast.LENGTH_SHORT);
                         toast.show();
                     }
