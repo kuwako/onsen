@@ -37,18 +37,13 @@ import static android.location.LocationManager.*;
 // 検索画面
 public class MainActivity extends BaseAppCompatActivity implements LocationListener {
 
-    private Button prefSearchBtn;
-    private Button mapSearchBtn;
-    private Spinner prefSpinner;
-    private String prefNameList[];
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> mAdapter;
     private RequestQueue mRequestQueue;
-    private int prefId = 1;
+    private int mPrefId = 1;
     private LocationManager mLocationManager = null;
     private String mProvider = "";
     private Location mLocation = null;
 
-    private String prefUri = "http://loco-partners.heteml.jp/u/prefectures";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,19 +60,19 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
         Log.d(LOG_TAG, gpsFlg ? "GPS OK" : "GPS NG");
 
         // 都道府県検索ボタン
-        prefSearchBtn = (Button) findViewById(R.id.prefSearchBtn);
+        Button prefSearchBtn = (Button) findViewById(R.id.prefSearchBtn);
         prefSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "都道府県検索");
                 Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                intent.putExtra(getString(R.string.pref_id), prefId);
+                intent.putExtra(getString(R.string.pref_id), mPrefId);
                 startActivity(intent);
             }
         });
 
         // 現在地検索ボタン
-        mapSearchBtn = (Button) findViewById(R.id.mapSearchBtn);
+        Button mapSearchBtn = (Button) findViewById(R.id.mapSearchBtn);
         // TODO GPSオフの時の処理
         mapSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,16 +101,16 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
         });
 
         // スピナーに登録
-        adapter = new ArrayAdapter<String>
+        mAdapter = new ArrayAdapter<String>
                 (this, R.layout.support_simple_spinner_dropdown_item);
 
         // 外部APIから都道府県をjsonで取得してadapterにset
         getPrefData();
 
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        prefSpinner = (Spinner) findViewById(R.id.prefSpinner);
+        mAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        Spinner prefSpinner = (Spinner) findViewById(R.id.prefSpinner);
 
-        prefSpinner.setAdapter(adapter);
+        prefSpinner.setAdapter(mAdapter);
 
         // スピナのリスナ登録
         prefSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -124,7 +119,7 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
                 Spinner spinner = (Spinner) parent;
 
                 // 取得できる値が0からスタートなので +1
-                prefId = (int) spinner.getSelectedItemPosition() + 1;
+                mPrefId = (int) spinner.getSelectedItemPosition() + 1;
             }
 
             @Override
@@ -198,6 +193,7 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
             mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         }
 
+        String prefUri = "http://loco-partners.heteml.jp/u/prefectures";
         mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, prefUri, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject prefJson) {
@@ -208,7 +204,7 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
                     // 都道府県情報をadapterに追加
                     for (int i = 1; i <= prefJson.length(); i++) {
                         String prefName = prefJson.getString(String.valueOf(i));
-                        adapter.add(prefName);
+                        mAdapter.add(prefName);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
