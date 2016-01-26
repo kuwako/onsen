@@ -43,7 +43,6 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
     private String prefNameList[];
     private ArrayAdapter<String> adapter;
     private RequestQueue mRequestQueue;
-    private Intent mapIntent;
     private int prefId = 1;
     private LocationManager mLocationManager = null;
     private String mProvider = "";
@@ -61,7 +60,6 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
         // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // getSupportActionBar().setHomeButtonEnabled(true);
 
-        mapIntent = new Intent(MainActivity.this, MapsActivity.class);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean gpsFlg = mLocationManager.isProviderEnabled(GPS_PROVIDER);
         Log.d(LOG_TAG, gpsFlg ? "GPS OK" : "GPS NG");
@@ -72,8 +70,9 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "都道府県検索");
-                mapIntent.putExtra(getString(R.string.pref_id), prefId);
-                startActivity(mapIntent);
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                intent.putExtra(getString(R.string.pref_id), prefId);
+                startActivity(intent);
             }
         });
 
@@ -93,11 +92,12 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
                 mLocation = mLocationManager.getLastKnownLocation(mProvider);
 
                 if (mLocation != null) {
-                    mapIntent.putExtra("mapSearch", true);
-                    mapIntent.putExtra("latitude", mLocation.getLatitude());
-                    mapIntent.putExtra("longitude", mLocation.getLongitude());
+                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                    intent.putExtra("mapSearch", true);
+                    intent.putExtra("latitude", mLocation.getLatitude());
+                    intent.putExtra("longitude", mLocation.getLongitude());
 
-                    startActivity(mapIntent);
+                    startActivity(intent);
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), "現在地取得中です。しばらく経ってからもう一度クリックしてください", Toast.LENGTH_SHORT);
                     toast.show();

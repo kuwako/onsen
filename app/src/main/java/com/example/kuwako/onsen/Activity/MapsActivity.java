@@ -34,6 +34,8 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
     private LatLng mPosition;
     private RequestQueue mRequestQueue;
     private JSONArray mOnsenListJson;
+    private final Double DEFAULT_LAT = 35.0;
+    private final Double DEFAULT_LON = 135.0;
 
     // Mapの表示範囲レベル都道府県一個表示できるかできないかぐらいのサイズ
     private final float ZOOM_LEVEL = 9.0f;
@@ -79,7 +81,8 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
         } else if (isMapSearch) {
             // 現在地検索だった場合
             // デフォ値はとりあえず日本標準時にしておく
-            mapSearch(intent.getDoubleExtra("latitude", 35.0), intent.getDoubleExtra("longitude", 135.0));
+            mapSearch(intent.getDoubleExtra("latitude", DEFAULT_LAT),
+                    intent.getDoubleExtra("longitude", DEFAULT_LON));
         }
     }
 
