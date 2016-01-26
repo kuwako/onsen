@@ -84,30 +84,11 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
                 Log.d(LOG_TAG, "マップ検索");
                 // GPSセンサが利用可能か
                 if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getBaseContext());
-                    alertDialogBuilder.setMessage("GPSが有効になっていません。¥n有効化しますか？")
-                            .setCancelable(false)
-                            .setPositiveButton(
-                                    "GPS設定起動",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Intent callGPSSettingIntent =
-                                                    new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                            startActivity(callGPSSettingIntent);
-                                        }
-                                    }
-                            );
-                    alertDialogBuilder.setNegativeButton("キャンセル",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                    AlertDialog alert = alertDialogBuilder.create();
-                    alert.show();
+                    // GPS利用不可ならば利用可能に設定してもらう
+                    Toast.makeText(getApplicationContext(), "GPSをONにしてください", Toast.LENGTH_LONG).show();
+                    Intent callGPSSettingIntent =
+                            new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(callGPSSettingIntent);
                 } else {
                     // GPSセンサ利用可能なら
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
