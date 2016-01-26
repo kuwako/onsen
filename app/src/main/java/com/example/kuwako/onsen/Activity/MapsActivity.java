@@ -240,15 +240,26 @@ public class MapsActivity extends BaseAppCompatActivity implements OnMapReadyCal
                     public void onInfoWindowClick(Marker marker) {
                         Log.d(LOG_TAG, "marker click");
                         Intent intent = new Intent(MapsActivity.this, DetailActivity.class);
-                        // TODO もっと丁寧に渡す方法ありそう
-                        intent.putExtra("onsen", String.valueOf(onsenJson));
-                        startActivity(intent);
+
+                        // 選択された温泉のJSONデータを取得してintentに挿入
+                        for (int i = 0; i < mOnsenListJson.length(); i++) {
+                            try {
+                                JSONObject onsenJson = mOnsenListJson.getJSONObject(i).getJSONObject("Onsen");
+                                if (onsenJson.getString("name").equals(marker.getTitle())) {
+                                    // TODO もっと丁寧にJSON渡す方法ありそう
+                                    intent.putExtra("onsen", String.valueOf(onsenJson));
+
+                                    startActivity(intent);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 });
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
 
     }
