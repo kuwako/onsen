@@ -2,6 +2,7 @@ package com.example.kuwako.onsen.Activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -10,8 +11,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,24 +82,53 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "マップ検索");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                }
+                // GPSセンサが利用可能か
+                if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getBaseContext());
+                    alertDialogBuilder.setMessage("GPSが有効になっていません。¥n有効化しますか？")
+                            .setCancelable(false)
+                            .setPositiveButton(
+                                    "GPS設定起動",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent callGPSSettingIntent =
+                                                    new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                            startActivity(callGPSSettingIntent);
+                                        }
+                                    }
+                            );
+                    alertDialogBuilder.setNegativeButton("キャンセル",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
 
-                mLocation = mLocationManager.getLastKnownLocation(mProvider);
-
-                if (mLocation != null) {
-                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                    intent.putExtra("mapSearch", true);
-                    intent.putExtra("latitude", mLocation.getLatitude());
-                    intent.putExtra("longitude", mLocation.getLongitude());
-
-                    startActivity(intent);
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.show();
                 } else {
-                    Toast toast = Toast.makeText(getApplicationContext(), "現在地取得中です。しばらく経ってからもう一度クリックしてください", Toast.LENGTH_SHORT);
-                    toast.show();
+                    // GPSセンサ利用可能なら
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                    }
+
+                    mLocation = mLocationManager.getLastKnownLocation(mProvider);
+
+                    if (mLocation != null) {
+                        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                        intent.putExtra("mapSearch", true);
+                        intent.putExtra("latitude", mLocation.getLatitude());
+                        intent.putExtra("longitude", mLocation.getLongitude());
+
+                        startActivity(intent);
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(), "現在地取得中です。しばらく経ってからもう一度クリックしてください", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
                 }
             }
         });
@@ -119,7 +152,7 @@ public class MainActivity extends BaseAppCompatActivity implements LocationListe
                 Spinner spinner = (Spinner) parent;
 
                 // 取得できる値が0からスタートなので +1
-                mPrefId = (int) spinner.getSelectedItemPosition() + 1;
+                mPrefId = spinner.getSelectedItemPosition() + 1;
             }
 
             @Override
