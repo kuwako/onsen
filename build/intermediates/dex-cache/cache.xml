@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/classes-c1d107bcc794fde392aca35485fe956180a7fea8.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.1/support-annotations-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/support-annotations-23.1.1-98d10913472ee40b42145e51aea73d9de00aa80d.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/jars/libs/internal_impl-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/internal_impl-23.1.1-67ae5f4eee5999a2e132c26d53e8f703519edbdb.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8e673cdfadd8f2d98fdb2fda2285c30f6e449782">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/classes-b91c2f926c5b296ad0a7e14d66672db274b9de62.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/Onsen.modules/volley/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="bcf2a431ec9a868e91655cf73cdd70cf44d056f6">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/classes-c5657ec722685d2ba117f30113714a8dcd0d247c.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/classes-6e6929f2c53e53c5b4dfffe5d77e7f2143090a83.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/com.android.support/design/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="379471b2bd17d9737c050345c08e8c7d16589784">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/classes-9ce8d771c433d45bbdd4d01b4bb4be3f82df0401.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="09c5e804bc67fc0580360043dff067df574a60d4">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/classes-72ee4889842e868e526c7cedb39121a9ee959826.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/8.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="04de44f90606c77f3b28cf44861f306290505aac">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/classes-800839d7dba0e8c898b1b150ac09c8cf00b0568d.jar" />
+    </item>
+    <item
+        jar="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="fef2b3e4b6b1b0e5fe7b69fa137a5fa55a3182ab">
+        <dex dex="/Users/kuwako/AndroidStudioProjects/Onsen/app/build/intermediates/pre-dexed/release/classes-2f40c3cffd2cd17f503e5d783d42ffda534b5b25.jar" />
+    </item>
+
+</items>
